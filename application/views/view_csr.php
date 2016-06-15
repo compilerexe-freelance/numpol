@@ -3,7 +3,7 @@ $this->session->select_menu = "csr";
 include('header.php');
 include('menu.php');
 ?>
-
+<div class="bg">
 <div class="container">
 <div class="col-md-7 form-group">
 <?php $this->Main_model->fetch_view_img_csr($this->input->get('id')); ?>

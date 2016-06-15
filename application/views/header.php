@@ -18,6 +18,10 @@
       .table-borderless tbody tr td, .table-borderless tbody tr th, .table-borderless thead tr th {
             border: none;
       }
+
+      .bg {
+        background-image: url('<?php echo base_url(); ?>assets/images/body/bg.jpg');
+      }
     </style>
 
   </head>

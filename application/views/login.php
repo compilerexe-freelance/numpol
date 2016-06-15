@@ -1,7 +1,7 @@
 <?php include('header.php'); ?>
     <div class="container">
         <div class="row" style="margin-top: 50px;">
-            <div class="col-md-4"><img src="<?php echo base_url('assets/images/logo/logo.jpg'); ?>" class="img-responsive"></div>
+            <div class="col-md-4"><img src="<?php echo base_url('assets/images/logo/logo.png'); ?>" class="img-responsive"></div>
             <div class="col-md-8" style="margin-top: 30px;">
                 <form action="<?php echo base_url('index.php/main/check_login'); ?>" method="POST">
                     <div class="col-md-12">

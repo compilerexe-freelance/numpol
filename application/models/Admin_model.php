@@ -26,6 +26,7 @@ class Admin_model extends CI_Model{
 
     if ($this->session->state_login == "") {
       $check_user = 0;
+      $counting = 0;
 
       $query = $this->db->query('SELECT * FROM np_users');
       foreach ($query->result() as $row) {
@@ -36,18 +37,22 @@ class Admin_model extends CI_Model{
       }
 
       if ($check_user == 1) {
-        $counting = 0;
         $sql = "SELECT u_loingtimes FROM np_users WHERE u_username='$getUser'";
         $query = $this->db->query($sql);
+
         foreach ($query->result() as $row) {
           $counting = $row->u_loingtimes;
         }
+      }
 
+      if ($counting > 0) {
         $counting = $counting - 1;
         $sql = "UPDATE np_users SET u_loingtimes=$counting, u_lastlogin=NOW() WHERE u_username='$getUser'";
         $this->db->query($sql);
-        $this->load->view('index');
+      } else {
+        $this->session->state_login = "";
       }
+      $this->load->view('index');
 
     }
 
@@ -286,5 +291,381 @@ class Admin_model extends CI_Model{
 					return $url;
 		return "";
 	}
+
+  // =============== CSR =================
+
+  public function add_item_csr() {
+    $title = $this->input->post('txt_title');
+    $detail = $this->input->post('txt_detail');
+
+    $safe_title = $this->db->escape($title);
+    $safe_detail = $this->db->escape($detail);
+
+    // echo $safe_title.$safe_detail;
+
+     if ($_FILES["filePreviewUpload"]["name"] != "" && $_FILES["fileUpload"]["name"] != "") {
+       $url = $this->upload_item_csr("filePreviewUpload","csr_preview");
+       $img_name = $_FILES["filePreviewUpload"]["name"];
+       $sql = "INSERT INTO np_csr_preview (title,image) VALUES($safe_title,'$img_name');";
+       $this->db->query($sql);
+      // echo $sql."<br>";
+
+       $url = $this->upload_item_csr("fileUpload", "csr_content");
+       $img_name = $_FILES["fileUpload"]["name"];
+       $sql = "INSERT INTO np_img_csr (title,detail,image) VALUES($safe_title,$safe_detail,'$img_name');";
+       $this->db->query($sql);
+      // echo $sql."<br>";
+
+       $sql = "INSERT INTO np_csr (title,detail) VALUES($safe_title,$safe_detail);";
+       $this->db->query($sql);
+      // echo $sql."<br>";
+
+     }
+
+     $this->load->view('csr_add');
+  }
+
+  private function upload_item_csr($genName,$getDir) {
+		$type = explode('.', $_FILES[$genName]["name"]);
+		$type = strtolower($type[count($type)-1]);
+		$url = "assets/images/".$getDir."/".$_FILES[$genName]["name"];
+		if(in_array($type, array("jpg", "jpeg", "gif", "png")))
+			if(is_uploaded_file($_FILES[$genName]["tmp_name"]))
+				if(move_uploaded_file($_FILES[$genName]["tmp_name"],$url))
+
+					return $url;
+		return "";
+	}
+
+  public function fetch_list_csr() {
+    $sql = "SELECT id,title FROM np_csr";
+    $qeury = $this->db->query($sql);
+    foreach ($qeury->result() as $row) {
+      echo "
+      <tr>
+        <form method='POST' action='".base_url()."index.php/main/edit_item_csr'>
+        <td>".$row->id."</td>
+        <td>".$row->title."</td>
+        <input type='hidden' name='itemId' value='".$row->id."'>
+        <td><button class='btn btn-warning' type='submit'>EDIT</button></td>
+        </form>
+      </tr>
+      ";
+    }
+  }
+
+  public function edit_item_csr() {
+    $id = $this->input->post('itemId');
+
+    $sql = "SELECT id,title,detail FROM np_csr WHERE id=$id";
+    $qeury = $this->db->query($sql);
+
+    foreach ($qeury->result() as $row) {
+      echo "
+      <div class='container'>
+      <form method='POST' action='".base_url()."index.php/main/edit_save_csr'>
+      <div class='col-md-12 form-group'>
+        <span>Title</span>
+      </div>
+      <div class='col-md-12 form-group'>
+        <input type='text' class='form-control' name='edit_title' value='".$row->title."'>
+      </div>
+      <div class='col-md-12 form-group'>
+        <span>Detail</span>
+      </div>
+      <div class='col-md-12 form-group'>
+          <textarea class='form-control input-lg' name='edit_detail' style='resize: none;' cols='20' rows='15'>".$row->detail."</textarea>
+      </div>
+      <div class='col-md-12 form-group'>
+          <input type='hidden' name='id' value='".$row->id."'>
+          <button type='submit' class='btn btn-success' style='width: 100%; height: 45px; font-size: 18px;'>Save</button>
+      </div>
+      </form>
+      </div>
+      ";
+    }
+
+  }
+
+  public function db_edit_save_csr() {
+    $id = $this->input->post('id');
+    $title = $this->input->post('edit_title');
+    $detail = $this->input->post('edit_detail');
+
+    $safe_title = $this->db->escape($title);
+    $safe_detail = $this->db->escape($detail);
+
+    $sql = "UPDATE np_csr SET title=$safe_title, detail=$safe_detail WHERE id=$id";
+    $this->db->query($sql);
+
+    $sql = "UPDATE np_csr_preview SET title=$safe_title WHERE id=$id";
+    $this->db->query($sql);
+
+    $sql = "UPDATE np_img_csr SET title=$safe_title, detail=$safe_detail WHERE id=$id";
+    $this->db->query($sql);
+    $this->load->view('csr_edit');
+  }
+
+  public function list_csr_delete() {
+    $sql = "SELECT id,title FROM np_csr";
+    $qeury = $this->db->query($sql);
+    foreach ($qeury->result() as $row) {
+      echo "
+      <tr>
+        <form method='POST' action='".base_url()."index.php/main/delete_item_csr'>
+        <td>".$row->id."</td>
+        <td>".$row->title."</td>
+        <input type='hidden' name='itemId' value='".$row->id."'>
+        <td><button class='btn btn-danger' type='submit'>DELETE</button></td>
+        </form>
+      </tr>
+      ";
+    }
+  }
+
+  public function delete_item_csr() {
+    $id = $this->input->post('itemId');
+    $sql = "DELETE FROM np_csr WHERE id=$id";
+    $this->db->query($sql);
+
+    $sql = "DELETE FROM np_csr_preview WHERE id=$id";
+    $this->db->query($sql);
+
+    $sql = "DELETE FROM np_img_csr WHERE id=$id";
+    $this->db->query($sql);
+
+    $this->load->view('csr_delete');
+  }
+
+  public function db_csr_banner() {
+	   $counting = 1;
+
+  	 for ($i = 1; $i <= 10; $i++) {
+        $genName = "fileUpload" . $i;
+  	    if ($_FILES[$genName]["name"] != "") {
+          $name_file = $_FILES[$genName]["name"];
+    			$url = $this->upload_csr_banner($genName);
+          $sql = "UPDATE np_csr_banner SET image='$name_file' WHERE id=$i";
+          $this->db->query($sql);
+          // echo $i. "<br>" .$_FILES[$genName]["name"];
+    			$counting++;
+  		  }
+  	 }
+
+    $this->load->view('csr_banner');
+
+  }
+
+  private function upload_csr_banner($genName) {
+		$type = explode('.', $_FILES[$genName]["name"]);
+		$type = strtolower($type[count($type)-1]);
+    $url = "assets/images/csr_banner/".$_FILES[$genName]["name"];
+		if(in_array($type, array("jpg", "jpeg", "gif", "png")))
+			if(is_uploaded_file($_FILES[$genName]["tmp_name"]))
+				if(move_uploaded_file($_FILES[$genName]["tmp_name"],$url))
+					return $url;
+		return "";
+	}
+
+  public function fetch_email() {
+    $sql = "SELECT email FROM np_email";
+    $query = $this->db->query($sql);
+
+    foreach ($query->result() as $row) {
+      echo $row->email;
+    }
+  }
+
+  public function db_email_save() {
+    $getEmail = $this->input->post('txt_email');
+
+    $sql = "UPDATE np_email SET email='$getEmail'";
+    $this->db->query($sql);
+    $this->load->view('change_email');
+  }
+
+  public function fetch_password() {
+    $sql = "SELECT password FROM np_admin";
+    $query = $this->db->query($sql);
+
+    foreach ($query->result() as $row) {
+      echo $row->password;
+    }
+  }
+
+  public function db_password_save() {
+    $getPass = $this->input->post('txt_pass');
+
+    $sql = "UPDATE np_admin SET password='$getPass'";
+    $this->db->query($sql);
+    $this->load->view('change_password');
+  }
+
+  // ===== demonstration =====
+
+  public function add_item_demonstration() {
+
+    $title = $this->input->post('txt_title');
+    $detail = $this->input->post('txt_detail');
+
+    $safe_title = $this->db->escape($title);
+    $safe_detail = $this->db->escape($detail);
+
+    // echo $safe_title.$safe_detail;
+
+     if ($_FILES["filePreviewUpload"]["name"] != "" && $_FILES["fileUpload"]["name"] != "") {
+       $url = $this->upload_item_product("filePreviewUpload","demonstration_preview");
+       $img_name = $_FILES["filePreviewUpload"]["name"];
+       $sql = "INSERT INTO np_demon_preview (title,image) VALUES($safe_title,'$img_name');";
+       $this->db->query($sql);
+      // echo $sql."<br>";
+
+       $url = $this->upload_item_product("fileUpload", "demonstration_content");
+       $img_name = $_FILES["fileUpload"]["name"];
+       $sql = "INSERT INTO np_img_demon (title,detail,image) VALUES($safe_title,$safe_detail,'$img_name');";
+       $this->db->query($sql);
+      // echo $sql."<br>";
+
+       $sql = "INSERT INTO np_demon (title,detail) VALUES($safe_title,$safe_detail);";
+       $this->db->query($sql);
+      // echo $sql."<br>";
+
+     }
+
+     $this->load->view('demonstration_add');
+
+  }
+
+  public function fetch_list_demonstration() {
+    $sql = "SELECT id,title FROM np_demon";
+    $qeury = $this->db->query($sql);
+    foreach ($qeury->result() as $row) {
+      echo "
+      <tr>
+        <form method='POST' action='".base_url()."index.php/main/edit_item_demonstration'>
+        <td>".$row->id."</td>
+        <td>".$row->title."</td>
+        <input type='hidden' name='itemId' value='".$row->id."'>
+        <td><button class='btn btn-warning' type='submit'>EDIT</button></td>
+        </form>
+      </tr>
+      ";
+    }
+  }
+
+  public function edit_item_demonstration() {
+    $id = $this->input->post('itemId');
+
+    $sql = "SELECT id,title,detail FROM np_demon WHERE id=$id";
+    $qeury = $this->db->query($sql);
+
+    foreach ($qeury->result() as $row) {
+      echo "
+      <div class='container'>
+      <form method='POST' action='".base_url()."index.php/main/edit_save_demonstration'>
+      <div class='col-md-12 form-group'>
+        <span>Title</span>
+      </div>
+      <div class='col-md-12 form-group'>
+        <input type='text' class='form-control' name='edit_title' value='".$row->title."'>
+      </div>
+      <div class='col-md-12 form-group'>
+        <span>Detail</span>
+      </div>
+      <div class='col-md-12 form-group'>
+          <textarea class='form-control input-lg' name='edit_detail' style='resize: none;' cols='20' rows='15'>".$row->detail."</textarea>
+      </div>
+      <div class='col-md-12 form-group'>
+          <input type='hidden' name='id' value='".$row->id."'>
+          <button type='submit' class='btn btn-success' style='width: 100%; height: 45px; font-size: 18px;'>Save</button>
+      </div>
+      </form>
+      </div>
+      ";
+    }
+
+  }
+
+  public function db_edit_save_demonstration() {
+    $id = $this->input->post('id');
+    $title = $this->input->post('edit_title');
+    $detail = $this->input->post('edit_detail');
+
+    $safe_title = $this->db->escape($title);
+    $safe_detail = $this->db->escape($detail);
+
+    $sql = "UPDATE np_demon SET title=$safe_title, detail=$safe_detail WHERE id=$id";
+    $this->db->query($sql);
+
+    $sql = "UPDATE np_demon_preview SET title=$safe_title WHERE id=$id";
+    $this->db->query($sql);
+
+    $sql = "UPDATE np_img_demon SET title=$safe_title, detail=$safe_detail WHERE id=$id";
+    $this->db->query($sql);
+    $this->load->view('demonstration_edit');
+  }
+
+  public function list_demonstration_delete() {
+    $sql = "SELECT id,title FROM np_demon";
+    $qeury = $this->db->query($sql);
+    foreach ($qeury->result() as $row) {
+      echo "
+      <tr>
+        <form method='POST' action='".base_url()."index.php/main/delete_item_demonstration'>
+        <td>".$row->id."</td>
+        <td>".$row->title."</td>
+        <input type='hidden' name='itemId' value='".$row->id."'>
+        <td><button class='btn btn-danger' type='submit'>DELETE</button></td>
+        </form>
+      </tr>
+      ";
+    }
+  }
+
+  public function delete_item_demonstration() {
+    $id = $this->input->post('itemId');
+    $sql = "DELETE FROM np_demon WHERE id=$id";
+    $this->db->query($sql);
+
+    $sql = "DELETE FROM np_demon_preview WHERE id=$id";
+    $this->db->query($sql);
+
+    $sql = "DELETE FROM np_img_demon WHERE id=$id";
+    $this->db->query($sql);
+
+    $this->load->view('demonstration_delete');
+  }
+
+  public function db_demonstration_banner() {
+	   $counting = 1;
+
+  	 for ($i = 1; $i <= 10; $i++) {
+        $genName = "fileUpload" . $i;
+  	    if ($_FILES[$genName]["name"] != "") {
+          $name_file = $_FILES[$genName]["name"];
+    			$url = $this->upload_demonstration_banner($genName);
+          $sql = "UPDATE np_demon_banner SET image='$name_file' WHERE id=$i";
+          $this->db->query($sql);
+          // echo $i. "<br>" .$_FILES[$genName]["name"];
+    			$counting++;
+  		  }
+  	 }
+
+    $this->load->view('demonstration_banner');
+
+  }
+
+  private function upload_demonstration_banner($genName) {
+		$type = explode('.', $_FILES[$genName]["name"]);
+		$type = strtolower($type[count($type)-1]);
+    $url = "assets/images/demonstration_banner/".$_FILES[$genName]["name"];
+		if(in_array($type, array("jpg", "jpeg", "gif", "png")))
+			if(is_uploaded_file($_FILES[$genName]["tmp_name"]))
+				if(move_uploaded_file($_FILES[$genName]["tmp_name"],$url))
+					return $url;
+		return "";
+	}
+
+  // end demonstration
 
 }

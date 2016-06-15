@@ -1,7 +1,7 @@
 <?php require('config.php'); ?>
 <div class="container">
     <div class="col-md-9">
-        <img src="<?php echo base_url('assets/images/logo/logo.jpg'); ?>" class="img-responsive">
+        <img src="<?php echo base_url('assets/images/logo/logo.png'); ?>" style="width:130px;">
     </div>
     <div class="col-md-3">
         <img src="<?php echo base_url('assets/images/logo/logo-new.jpg'); ?>" style="width:280px; margin-top: 20px;" class="img-responsive">
@@ -52,18 +52,28 @@
                 <li <?php if ($this->session->select_menu == "csr") {echo "class='dropdown active'";} else {echo "class='dropdown'";} ?> >
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">CSR <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#">ADD</a></li>
-                        <li><a href="#">EDIT</a></li>
-                        <li><a href="#">DELETE</a></li>
-                        <li><a href="#">BANNER</a></li>
+                        <li><a href="<?php echo base_url('index.php/main/csr_add'); ?>">ADD</a></li>
+                        <li><a href="<?php echo base_url('index.php/main/csr_edit'); ?>">EDIT</a></li>
+                        <li><a href="<?php echo base_url('index.php/main/csr_delete'); ?>">DELETE</a></li>
+                        <li><a href="<?php echo base_url('index.php/main/csr_banner'); ?>">BANNER</a></li>
+                    </ul>
+                </li>
+
+                <li <?php if ($this->session->select_menu == "demonstration") {echo "class='dropdown active'";} else {echo "class='dropdown'";} ?> >
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">DEMONSTRATION <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="<?php echo base_url('index.php/main/demonstration_add'); ?>">ADD</a></li>
+                        <li><a href="<?php echo base_url('index.php/main/demonstration_edit'); ?>">EDIT</a></li>
+                        <li><a href="<?php echo base_url('index.php/main/demonstration_delete'); ?>">DELETE</a></li>
+                        <li><a href="<?php echo base_url('index.php/main/demonstration_banner'); ?>">BANNER</a></li>
                     </ul>
                 </li>
 
                 <li <?php if ($this->session->select_menu == "privacy") {echo "class='dropdown active'";} else {echo "class='dropdown'";} ?> >
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">PRIVACY <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#">CHANGE EMAIL</a></li>
-                        <li><a href="#">CHANGE PASSWORD</a></li>
+                        <li><a href="<?php echo base_url('index.php/main/change_email'); ?>">CHANGE EMAIL</a></li>
+                        <li><a href="<?php echo base_url('index.php/main/change_password'); ?>">CHANGE PASSWORD</a></li>
                     </ul>
                 </li>
 

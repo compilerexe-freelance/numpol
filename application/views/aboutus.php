@@ -3,6 +3,7 @@ $this->session->select_menu = "aboutus";
 include('header.php');
 include('menu.php');
 ?>
+    <div class="bg">
     <div class="container">
         <div class="col-md-12">
             <img src="<?php echo base_url('assets/images/aboutus/ab_main.jpg'); ?>" class="img-responsive" style="width:100%; height:250px;" alt="" />

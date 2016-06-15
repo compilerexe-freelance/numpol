@@ -1,3 +1,4 @@
+</div>
 <div class="container-fluid" style="background-color: #262626;">
     <div class="container">
         <div class="col-md-12">
@@ -34,7 +35,7 @@
         <div class="col-md-offset-7 col-md-5 text-left" style="color: #fff; font-size: 14px;">
             <br />
             <br />
-            <span>© 2012 NUMPOL INTERTRADE LTD.,PARTAll rights reserved</span>
+            <span>© 2012 NUMPOL INTERTRADE Co.,Ltd All rights reserved</span>
             <br />
             <br />
         </div>

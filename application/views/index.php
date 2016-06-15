@@ -3,10 +3,10 @@ $this->session->select_menu = "home";
 include('header.php');
 include('menu.php');
 ?>
-
+<div class="bg">
 <div class="container">
     <div class="col-md-4">
-        <div class="form-group text-center" style="margin-top: 15px; background-color:#000;">
+        <div class="form-group text-center" style="margin-top: 0px; background-color:#000;">
             <br />
             <span style="color:#fff; font-size: 20px; font-weight: bold;">BACKGROUND</span>
             <br />

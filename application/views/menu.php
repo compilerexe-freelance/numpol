@@ -1,7 +1,7 @@
 <?php require('config.php'); ?>
 <div class="container">
     <div class="col-md-9">
-        <img src="<?php echo base_url('assets/images/logo/logo.jpg'); ?>" class="img-responsive">
+        <img src="<?php echo base_url('assets/images/logo/logo.png'); ?>" style="width:130px;">
     </div>
     <div class="col-md-3">
         <img src="<?php echo base_url('assets/images/logo/logo-new.jpg'); ?>" style="width:280px; margin-top: 20px;" class="img-responsive">
@@ -31,25 +31,65 @@
                     <a href="<?php echo base_url('index.php/main/aboutus'); ?>">ABOUT US</a>
                 </li>
 
-                <li <?php if ($this->session->select_menu == "product") {echo "class='dropdown active'";} else {echo "class='dropdown'";} ?> >
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">PRODUCT <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <?php $this->Main_model->fetch_menu_product(); ?>
-                    </ul>
-                </li>
-
-                <li <?php if ($this->session->select_menu == "csr") {echo "class='dropdown active'";} else {echo "class='dropdown'";} ?> >
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">CSR <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <?php $this->Main_model->fetch_menu_csr(); ?>
-                    </ul>
-                </li>
-
                 <li <?php if ($this->session->select_menu == "contactus") {echo "class='active'";} ?> >
                     <a href="<?php echo base_url('index.php/main/contactus'); ?>">CONTACT US</a>
                 </li>
+
+                <li <?php if ($this->session->select_menu == "product") {echo "class='dropdown active'";} else {echo "class='dropdown'";} ?> >
+
+                    <?php
+                      if ($this->session->state_login != "") {
+                        echo '
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">PRODUCT <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                        ';
+                        $this->Main_model->fetch_menu_product();
+                        echo '
+                        </ul>
+                        ';
+                      } else {
+                        echo '<a href="'.base_url().'index.php/main/login">PRODUCT</a>';
+                      }
+                    ?>
+
+                </li>
+
+                <li <?php if ($this->session->select_menu == "csr") {echo "class='dropdown active'";} else {echo "class='dropdown'";} ?> >
+
+                    <?php
+                      if ($this->session->state_login != "") {
+                        echo '
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">CSR <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                        ';
+                        $this->Main_model->fetch_menu_csr();
+                        echo '
+                        </ul>
+                        ';
+                      } else {
+                        echo '<a href="'.base_url().'index.php/main/login">CSR</a>';
+                      }
+                    ?>
+
+                </li>
+
                 <li <?php if ($this->session->select_menu == "demonstration") {echo "class='active'";} ?> >
-                    <a href="<?php echo base_url('index.php/main/demonstration'); ?>">SHOW AND DEMONSTRATION</a>
+
+                    <?php
+                      if ($this->session->state_login != "") {
+                        echo '
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">SHOW AND DEMONSTRATION <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                        ';
+                        $this->Main_model->fetch_menu_demonstration();
+                        echo '
+                        </ul>
+                        ';
+                      } else {
+                        echo '<a href="'.base_url().'index.php/main/login">SHOW AND DEMONSTRATION</a>';
+                      }
+                    ?>
+
                 </li>
 
             </ul>

@@ -1,9 +1,10 @@
 <?php
 $this->session->select_menu = "contactus";
 include('header.php');
+echo $this->session->flashdata('email_sent');
 include('menu.php');
 ?>
-
+    <div class="bg">
     <div class="container">
         <div class="col-md-12 form-group">
             <img src="<?php echo base_url('assets/images/contactus/ct_main.jpg'); ?>" class="img-responsive" style="width: 100%; height:300px; ">
@@ -60,7 +61,7 @@ include('menu.php');
                 <br />
             </div>
             <div class="col-md-12 text-center form-group">
-                <form action="../admin/process/contact_send.php" method="POST" id="ctform">
+                <form action="<?php echo base_url(); ?>index.php/main/send_email" method="POST">
                     <div class="table-responsive">
                         <table class="table table-borderless">
                             <tr>
@@ -73,7 +74,7 @@ include('menu.php');
                                 </td>
                                 <td>
                                     <div class="form-group">
-                                        <input type="text" class="form-control input-lg">
+                                        <input type="text" class="form-control input-lg" name="txt_name">
                                     </div>
                                 </td>
                             </tr>
@@ -83,7 +84,7 @@ include('menu.php');
                                 </td>
                                 <td>
                                     <div class="form-group">
-                                        <input type="text" class="form-control input-lg">
+                                        <input type="text" class="form-control input-lg" name="txt_email">
                                     </div>
                                 </td>
                             </tr>
@@ -93,7 +94,7 @@ include('menu.php');
                                 </td>
                                 <td>
                                     <div class="form-group">
-                                        <input type="text" class="form-control input-lg">
+                                        <input type="text" class="form-control input-lg" name="txt_tel">
                                     </div>
                                 </td>
                             </tr>
@@ -103,7 +104,7 @@ include('menu.php');
                                 </td>
                                 <td>
                                     <div class="form-group">
-                                        <input type="text" class="form-control input-lg">
+                                        <input type="text" class="form-control input-lg" name="txt_topic">
                                     </div>
                                 </td>
                             </tr>
@@ -113,7 +114,7 @@ include('menu.php');
                                 </td>
                                 <td>
                                     <div class="form-group">
-                                        <textarea class="form-control" style="resize: none;" cols="15" rows="10"></textarea>
+                                        <textarea type="text" class="form-control" name="txt_detail" style="resize: none;" cols="15" rows="10"></textarea>
                                     </div>
                                 </td>
                             </tr>
@@ -142,7 +143,7 @@ include('menu.php');
 
     <script src="<?php echo base_url('assets/js/jquery-2.2.3.min.js'); ?>"></script>
     <script src="<?php echo base_url('assets/js/bootstrap.min.js'); ?>"></script>
-    
+
     <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?v=3&sensor=true"></script>
         <script type="text/javascript">
 
@@ -192,4 +193,4 @@ include('menu.php');
 
   </body>
 
-</html>
+  <?php include('footer.php'); ?>

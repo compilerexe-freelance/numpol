@@ -3,7 +3,7 @@ $this->session->select_menu = "home_banner";
 include('header.php');
 include('menu_admin.php');
 ?>
-
+    <div class="">
     <div class="container">
 
       <div class="col-md-12 form-group">

@@ -3,7 +3,7 @@ $this->session->select_menu = "product";
 include('header.php');
 include('menu_admin.php');
 ?>
-
+<div class="">
 <div class="container">
   <div class="table table-responsive">
     <table class="table table-bordered table-hover">
